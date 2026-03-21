@@ -3,44 +3,32 @@ name: Build C25 Docker Image
 on:
   push:
     branches: [ master, main ]
-  pull_request:
-    branches: [ master, main ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
-    - name: Create required directories
-      run: |
-        mkdir -p pathos constellation-25 agent_logs
-        echo '{"name":"C25","version":"1.0","agents":25,"owner":"Cygel White / FacePrintPay Inc","prior_art":"2023-03-21"}' > C25_MCP_MANIFEST.json
+      - name: Create required directories
+        run: |
+          mkdir -p pathos constellation-25 agent_logs
+          echo '{"name":"C25","version":"1.0","agents":25,"owner":"Cygel White / FacePrintPay Inc","prior_art":"2023-03-21"}' > C25_MCP_MANIFEST.json
 
-    - name: Log in to Docker Hub
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v3
-      with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Build Docker image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: false
-        tags: |
-          faceprintpay/constellation25:latest
-          faceprintpay/constellation25:${{ github.sha }}
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
-
-    - name: Verify image
-      run: |
-        docker run --rm faceprintpay/constellation25:latest echo "✅ C25 Docker image verified"
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: aimetaverse/constellation25:latest
