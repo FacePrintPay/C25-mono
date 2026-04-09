@@ -1,3 +1,4 @@
+#!/data/data/com.termux/files/usr/bin/bash
 # REPO: c25-constellation-25 | FILE: constellation-25.sh | CONSTELLATION25
 
 #!/data/data/com.termux/files/usr/bin/bash
